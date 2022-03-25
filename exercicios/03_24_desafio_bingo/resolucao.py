@@ -134,7 +134,7 @@ def verificar_vitoria(cartela):
     return False
 
 
-def jogar_bingo(cartela, qtd_numeros=75, parar_ao_vencer=False):
+def jogar_bingo(cartela, qtd_numeros=75, parar_ao_vencer=True, cartelas_verbose=False):
     ''' Executa o jogo do bingo
     
         Retorna True ou False, porém quando o parar_ao_vencer=True, retorna o número de vezes
@@ -148,11 +148,19 @@ def jogar_bingo(cartela, qtd_numeros=75, parar_ao_vencer=False):
 
         nova_cartela = preecher_cartela(cartela, num_sorteado)
         
+        # printa a tabela a cada número sorteado
+        if cartelas_verbose:
+            print('\n')
+            printar_cartela(nova_cartela)
+        
+        # para ao vencer e retorna i vezes que levou para isso
         if parar_ao_vencer:
             if verificar_vitoria(nova_cartela):
                 return i
     
     return verificar_vitoria(nova_cartela)
+
+
 
 ### PASSO 1 ###
 
@@ -175,7 +183,7 @@ print('\n########################## PASSO 3 ##########################\n')
 cartela3 = criar_cartela()
 printar_cartela(cartela3)
 
-if jogar_bingo(cartela3, qtd_numeros=50):
+if jogar_bingo(cartela3, qtd_numeros=50, parar_ao_vencer=False, cartelas_verbose=True):
     print('\nA cartela é vencedora!\n')
 else:
     print('\nA cartela NÃO é vencedora!\n')
