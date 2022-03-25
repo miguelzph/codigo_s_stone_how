@@ -194,9 +194,9 @@ else:
 
 print('\n########################## PASSO 4 ##########################\n')
 lista_qtd_necessaria_vitoria = []
+cartela4 = criar_cartela()
 for _ in range(1000):
-    cartela_n = criar_cartela()
-    lista_qtd_necessaria_vitoria.append(jogar_bingo(cartela_n, parar_ao_vencer=True))
+    lista_qtd_necessaria_vitoria.append(jogar_bingo(cartela4.copy(), parar_ao_vencer=True))
     
 print(f'''
     * O número mínimo de sorteio para que a carteja seja vencedora: {min(lista_qtd_necessaria_vitoria)}
