@@ -12,24 +12,26 @@ Quando se esgotarem as tentativas, o programa finaliza dizendo que o jogador per
 Algumas funções, importações e variáveis foram pré-definidas para auxiliá-los!
 """
 
+from utils import WORDS, STATUS
 
 from random import choice
 
 
-def get_secret_word():
+def get_secret_word(list_of_words):
     """Devolve uma palavra aleatória de uma lista."""
-    list_of_words = ['teste', 'segundo']
     
-    return choice(list_of_words)
+    return choice(list_of_words).lower()
 
 
-def print_game_board(secret_word: str, correct_letters: str, remain_tentatives: int) -> None:
+def print_game_board(secret_word: str, correct_letters: str, attemps: int, error: int, status: list) -> None:
     """Imprime a situação atual do jogo."""
     
     # substitui por '_' as letras que ainda não foram acertadas
     word_current_state = ''.join(['-' if s_letter not in correct_letters else s_letter for s_letter in secret_word])
     
-    print(f'\nVocê ainda têm {remain_tentatives} tentativas!')
+    print(status[error])
+    
+    print(f'\nVocê ainda têm {attemps - error} tentativas!')
     print(f'A palavra é: {word_current_state}\n')
     
     return None
@@ -69,16 +71,15 @@ def guess_letter(letter: str, secret_word: str, correct_letters: list, missed_le
     
 def verify_victory(secret_word: str, correct_letters: str) -> bool:
     '''Verifica se o jogador venceu o jogo'''
-    for s_letter in secret_word:
-        if s_letter in correct_letters: # se a letra está na lista continua 
-            continue
-
-        else: # se tiver uma letra que não está nas lista de corretas já retorna False    
-            return False
-    return True
-
+    letters_secret_word = [letter for letter in secret_word]
     
-def game_continue(secret_word: str, correct_letters: str, error: int, attemp: int) -> bool:
+    if set(letters_secret_word) == set(correct_letters):
+        return True
+    else:
+        return False
+
+
+def game_continue(secret_word: str, correct_letters: str, error: int, attemp: int, status: list) -> bool:
     """Função que decide se jogo já encerrou ou não."""
     
     # verifica vitoria
@@ -90,23 +91,25 @@ def game_continue(secret_word: str, correct_letters: str, error: int, attemp: in
         if error < attemp:
             return True
         else:
+            print(status[-1])
             print(f'\nInfelizmente você não acertou! A palavra era "{secret_word}"!\n')
+            return False
 
 
-# secret_word = ? # variável para palavra secreta
+secret_word = get_secret_word(WORDS)
 correct_letters = []  # variável que armazena as letras corretas já jogadas
 missed_letters = []  # variável que armazena as letras incorretas já jogadas
 error = 0  # erro inicial
 attempts = 6  # tentativas
 
-secret_word = get_secret_word()
+print(secret_word)
 
 print('Bem vindo!\n')
 
-while game_continue(secret_word, correct_letters, error, attempts):
+while game_continue(secret_word, correct_letters, error, attempts, STATUS):
     
     
-    print_game_board(secret_word, correct_letters, attempts-error)
+    print_game_board(secret_word, correct_letters, attempts, error, STATUS)
     
     letter = read_input_player(correct_letters + missed_letters)
     
