@@ -21,7 +21,7 @@ from itertools import permutations
 
 def read_input_player() -> int:
     """Lê o tamanho do quadrado."""
-    num_side = input('Digite o tamanho do lado do quadrado: ')
+    num_side = input('\nDigite o tamanho do lado do quadrado: ')
     
     # verifica tamanho e tipo
     if not num_side.isnumeric():
@@ -31,29 +31,30 @@ def read_input_player() -> int:
     return int(num_side)
 
 
-def create_all_squares(num_side: int = 3) -> tuple:
+def create_all_squares(num_side: int = 3) -> object:
+    '''Cria todos os quadrados possíveis 
+    
+    num_side: número de lados do quadrado
+    
+    retorna: um objeto do tipo itertools.permutations'''
     
     possible_numbers = range(1, num_side**2 + 1)
-    all_squares = tuple(permutations(possible_numbers))
+    all_squares = permutations(possible_numbers)
     
     return all_squares
 
 
-def verify_a_square(square:tuple or list, side_number:None or int = None) -> bool:
+def verify_a_square(square: tuple or list, side_number: int) -> bool:
     '''Verifica se um quadrado é mágico ou não
     
     square: quadrado em formato de lista ou tupla
     side_number: tamanho do lado do quadrado
     
     retorna: True é mágico, ou False não é mágico'''
-    
-    if side_number is None:
-        side_number = int(len(square) ** (1/2))
-                    
-    
+     
     first_diagonal = square[0:len(square):side_number+1]
     
-    second_diagonal = square[-1:-(len(square)+1):-(side_number+1)]
+    second_diagonal = square[side_number-1:len(square)-1:side_number-1]
     
     # testing diagonals
     if sum(first_diagonal) != sum(second_diagonal):
@@ -66,30 +67,49 @@ def verify_a_square(square:tuple or list, side_number:None or int = None) -> boo
 
         col = square[side:side_number**2:side_number]
 
-
         line = square[side*side_number:side*side_number + side_number]
 
         if sum(line) != sum_diagonal or sum(col) != sum_diagonal:
             return False
     return True    
 
+#### Ao alterar o tipo perdi a posição e não dá para seguir mais essa logica
+# def find_all_magic_squares(side_number:int) -> list:
+    
+#     magic_squares = []
+    
+#     # todas as possibilidades de quadrados
+#     all_squares = create_all_squares(side_number)
+    
+#     # achei uma logica de simetria, então só percorre até a metade
+#     for i, square in enumerate(all_squares[:int(len(tuple(all_squares))/2)]):
+#         if verify_a_square(square, 3):
+
+#             # quadrado avaliado
+#             magic_squares.append(square)
+
+#             # simetrico -> tamanho - i -1
+#             magic_squares.append(all_squares[len(all_squares)-i-1])
+#     return magic_squares
 
 def find_all_magic_squares(side_number:int) -> list:
     
     magic_squares = []
+    i = 0
     
     # todas as possibilidades de quadrados
     all_squares = create_all_squares(side_number)
     
-    # achei uma logica de simetria, então só percorre até a metade
-    for i, square in enumerate(all_squares[:int(len(all_squares)/2)]):
-        if verify_a_square(square, 3):
+    # percorrendo os quadrados
+    for square in all_squares:
+        i += 1
+        if i % 10000000 ==0:
+            print(f'{i/1000000} milhoes')
+        if verify_a_square(square, side_number):
 
             # quadrado avaliado
             magic_squares.append(square)
-
-            # simetrico -> tamanho - i -1
-            magic_squares.append(all_squares[len(all_squares)-i-1])
+                   
     return magic_squares
 
 
@@ -112,12 +132,13 @@ side_square = read_input_player()
 magic_squares = find_all_magic_squares(side_square)
 
 if magic_squares:
-    print(f'\nHá {len(magic_squares)} quadrados mágicos de lado {side_square}\n\n==============QUADRADOS ==============')
+    print(f'\nHá {len(magic_squares)} quadrados mágicos de lado, e a constante é {sum(magic_squares[0][:3])}')
+    print('\n==============QUADRADOS ==============')
 else:
     print(f'\nNão há quadrados mágicos de lado {side_square}\n\n')
 
-for square in magic_squares:
+for i, square in enumerate(magic_squares):
     
     print('==============')
-    print(f'QUADRADO DE SOMA: {sum(square[0:len(square):side_square+1])}')
+    print(f'QUADRADO {i+1}')
     print_square(square)
